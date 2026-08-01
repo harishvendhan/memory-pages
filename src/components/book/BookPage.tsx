@@ -10,7 +10,7 @@ interface BookPageProps {
   messages: Message[];
   pageNumber: number;
   totalPages: number;
-  highlight?: string;
+  highlight?: string | undefined;
 }
 
 /** A single paper page with texture, gutter shading and a page number. */

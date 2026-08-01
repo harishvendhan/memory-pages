@@ -3,7 +3,7 @@ import { HiMiniPlay } from "react-icons/hi2";
 interface VideoMessageProps {
   poster: string;
   duration: string;
-  caption?: string;
+  caption?: string | undefined;
 }
 
 /** Film still with a gilded play button. */

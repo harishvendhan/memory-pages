@@ -3,7 +3,7 @@ import { HiMiniPlay, HiMiniPause } from "react-icons/hi2";
 
 interface VoiceMessageProps {
   duration: string;
-  caption?: string;
+  caption?: string | undefined;
 }
 
 /** Luxury audio card: gilded play control, engraved waveform, duration. */

@@ -8,10 +8,10 @@ import { VideoMessage } from "./VideoMessage";
 interface MessageEntryProps {
   message: Message;
   index: number;
-  highlight?: string;
+  highlight?: string | undefined;
 }
 
-function Highlighted({ text, term }: { text: string; term?: string }) {
+function Highlighted({ text, term }: { text: string; term?: string | undefined }) {
   if (!term) return <>{text}</>;
   const parts = text.split(new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "ig"));
   return (

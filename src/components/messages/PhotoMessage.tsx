@@ -1,6 +1,6 @@
 interface PhotoMessageProps {
   src: string;
-  caption?: string;
+  caption?: string | undefined;
   tilt: number;
 }
 
