@@ -27,7 +27,7 @@ export function BookCover({ opening, onOpen }: BookCoverProps) {
       />
 
       <motion.div
-        className="gpu relative h-[62vh] max-h-[620px] w-[min(78vw,420px)] overflow-hidden rounded-r-lg rounded-l-sm"
+        className="gpu relative h-[84vh] min-h-[500px] max-h-[820px] md:h-[90vh] md:min-h-[740px] md:max-h-[1050px] w-[min(90vw,540px)] overflow-hidden rounded-r-xl rounded-l-sm border border-gold-deep/30"
         style={{
           transformOrigin: "left center",
           transformStyle: "preserve-3d",
@@ -47,7 +47,7 @@ export function BookCover({ opening, onOpen }: BookCoverProps) {
       >
         {/* spine */}
         <div
-          className="absolute inset-y-0 left-0 w-7"
+          className="absolute inset-y-0 left-0 w-6 sm:w-8"
           style={{
             background:
               "linear-gradient(90deg, oklch(0.18 0.04 40), oklch(0.3 0.07 44) 60%, oklch(0.2 0.05 42))",
@@ -55,19 +55,22 @@ export function BookCover({ opening, onOpen }: BookCoverProps) {
           aria-hidden
         />
         {/* embossed golden border */}
-        <div className="absolute inset-5 rounded-sm border border-gold/50" aria-hidden />
-        <div className="absolute inset-7 rounded-sm border border-gold/25" aria-hidden />
+        <div className="absolute inset-3 sm:inset-6 rounded-sm border border-gold/50" aria-hidden />
+        <div className="absolute inset-5 sm:inset-9 rounded-sm border border-gold/25" aria-hidden />
 
-        <div className="relative flex h-full flex-col items-center justify-center px-10 text-center">
-          <span className="mb-6 h-px w-16 bg-gold/50" />
+        <div className="relative flex h-full flex-col items-center justify-center px-4 sm:px-8 text-center">
+          <span className="mb-4 sm:mb-5 h-px w-16 bg-gold/50" />
+          <p className="font-body text-[0.6rem] sm:text-[0.65rem] uppercase tracking-[0.32em] sm:tracking-[0.38em] text-gold/80 mb-2">
+            Our Lovable Memories
+          </p>
           <h1
-            className="text-gilded font-display text-5xl leading-none tracking-wide sm:text-6xl"
+            className="text-gilded font-display text-4xl leading-tight tracking-wide sm:text-5xl flex items-center justify-center gap-2.5"
             style={{ filter: "drop-shadow(0 2px 6px oklch(0 0 0 / 0.6))" }}
           >
-            Our Story
+            You <span className="inline-block text-3xl sm:text-4xl filter drop-shadow-[0_0_10px_rgba(244,114,182,0.8)]">💖</span> Me
           </h1>
-          <p className="mt-5 font-script text-sm italic text-gold/70 sm:text-base">
-            “A book filled with lovable words.”
+          <p className="mt-5 font-script text-sm italic text-gold/80 sm:text-base">
+            “A book filled with our most cherished moments.”
           </p>
           <span className="mt-6 h-px w-16 bg-gold/50" />
 

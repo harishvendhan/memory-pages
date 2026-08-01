@@ -1,20 +1,37 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { HiXMark } from "react-icons/hi2";
-import { chapters } from "@/data/conversation";
+import type { Chapter } from "@/types/conversation";
+
+import { getDisplayName } from "@/lib/displayName";
 
 interface ContentsDrawerProps {
   open: boolean;
   onClose: () => void;
   onSelect: (leafIndex: number) => void;
   currentIndex: number;
+  chapters?: Chapter[];
 }
 
 /** Elegant table of contents drawer. */
-export function ContentsDrawer({ open, onClose, onSelect, currentIndex }: ContentsDrawerProps) {
+export function ContentsDrawer({
+  open,
+  onClose,
+  onSelect,
+  currentIndex,
+  chapters = [],
+}: ContentsDrawerProps) {
   return (
     <AnimatePresence>
       {open && (
-        <motion.div className="fixed inset-0 z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div
+          className="fixed inset-0 z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Table of contents"
+        >
           <div className="absolute inset-0 bg-leather-deep/75 backdrop-blur-sm" onClick={onClose} aria-hidden />
           <motion.aside
             initial={{ x: "-100%" }}
@@ -39,7 +56,7 @@ export function ContentsDrawer({ open, onClose, onSelect, currentIndex }: Conten
             <div className="mt-8 flex-1 space-y-1 overflow-y-auto">
               {chapters.map((chapter, i) => (
                 <button
-                  key={chapter.title}
+                  key={`${chapter.title}-${i}`}
                   type="button"
                   onClick={() => {
                     onSelect(i);
@@ -52,10 +69,10 @@ export function ContentsDrawer({ open, onClose, onSelect, currentIndex }: Conten
                     <span
                       className={`block font-display text-xl ${i === currentIndex ? "text-gold" : "text-foreground"}`}
                     >
-                      {chapter.title}
+                      {getDisplayName(chapter.title)}
                     </span>
                     <span className="block font-body text-xs italic text-muted-foreground">
-                      {chapter.subtitle}
+                      {getDisplayName(chapter.subtitle)}
                     </span>
                   </span>
                   <span className="font-body text-[0.65rem] tracking-[0.2em] text-gold/60">

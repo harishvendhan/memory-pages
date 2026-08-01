@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { HiMiniPlay } from "react-icons/hi2";
 
 interface VideoMessageProps {
@@ -7,7 +8,11 @@ interface VideoMessageProps {
 }
 
 /** Film still with a gilded play button. */
-export function VideoMessage({ poster, duration, caption }: VideoMessageProps) {
+export const VideoMessage = memo(function VideoMessage({
+  poster,
+  duration,
+  caption,
+}: VideoMessageProps) {
   return (
     <div
       className="gpu group relative overflow-hidden rounded-md bg-paper p-2"
@@ -18,6 +23,7 @@ export function VideoMessage({ poster, duration, caption }: VideoMessageProps) {
           src={poster}
           alt={caption ?? "Video memory"}
           loading="lazy"
+          decoding="async"
           width={1024}
           height={768}
           className="h-auto w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
@@ -44,4 +50,4 @@ export function VideoMessage({ poster, duration, caption }: VideoMessageProps) {
       ) : null}
     </div>
   );
-}
+});

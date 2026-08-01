@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import woodTable from "@/assets/wood-table.jpg";
 import { DustParticles } from "./DustParticles";
+import { HeartBubbles } from "./HeartBubbles";
 
-/** The dark room: wooden table, candle glow, dust and vignette. */
+/** The dark room: wooden table, candle glow, romantic heart bubbles, dust and vignette. */
 export function RoomBackdrop({ children }: { children: ReactNode }) {
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background">
@@ -29,6 +30,7 @@ export function RoomBackdrop({ children }: { children: ReactNode }) {
         aria-hidden
       />
       <DustParticles />
+      <HeartBubbles />
       <div className="relative z-10">{children}</div>
     </div>
   );

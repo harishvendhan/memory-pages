@@ -1,37 +1,131 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { HiMagnifyingGlass, HiOutlineListBullet } from "react-icons/hi2";
-import { leaves, TOTAL_PAGES } from "@/data/conversation";
-import { useBookNavigation } from "@/hooks/useBookNavigation";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import HTMLFlipBook from "react-pageflip";
+import { motion, AnimatePresence } from "framer-motion";
+import { HiMagnifyingGlass, HiOutlineListBullet, HiOutlineBookOpen } from "react-icons/hi2";
+import { useMemoryBook } from "@/hooks/useMemoryBook";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BookPage } from "./BookPage";
 import { BookControls } from "./BookControls";
-import { PageFlipSheet } from "./PageFlipSheet";
 import { Ribbon } from "./Ribbon";
 import { SearchOverlay } from "@/components/overlays/SearchOverlay";
 import { ContentsDrawer } from "@/components/overlays/ContentsDrawer";
 
-/** The open volume: two paper pages, leather binding, flipping and overlays. */
-export function OpenBook() {
+interface FlipBookRef {
+  pageFlip: () => {
+    flipNext: () => void;
+    flipPrev: () => void;
+    turnToPage: (page: number) => void;
+    getCurrentPageIndex: () => number;
+    getPageCount: () => number;
+  };
+}
+
+interface OpenBookProps {
+  memoryBook: ReturnType<typeof useMemoryBook>;
+  onClose?: () => void;
+}
+
+export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
+  const { leaves, totalPages, search: searchAdapter, chapters, isPaginating } = memoryBook;
   const isMobile = useIsMobile();
-  const sheetsPerLeaf = isMobile ? 2 : 1;
-  const total = leaves.length * sheetsPerLeaf;
+  const bookRef = useRef<FlipBookRef | null>(null);
 
-  const [flipKey, setFlipKey] = useState(0);
-  const { index, direction, flipNext, flipPrev, turnToIndex, canNext, canPrev } =
-    useBookNavigation({ total, onFlip: () => setFlipKey((k) => k + 1) });
-
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [search, setSearch] = useState(false);
   const [contents, setContents] = useState(false);
   const [highlight, setHighlight] = useState<string>("");
   const [bookmarked, setBookmarked] = useState<number | null>(null);
 
-  const leafIndex = isMobile ? Math.floor(index / 2) : index;
-  const leaf = leaves[Math.min(leafIndex, leaves.length - 1)]!;
-  const mobileSide: "left" | "right" = index % 2 === 0 ? "left" : "right";
+  // Flatten leaves into single pages for continuous chronological reading
+  const singlePages = useMemo(() => {
+    const pages: Array<{
+      id: string;
+      side: "left" | "right";
+      heading: string;
+      subheading: string;
+      messages: typeof leaves[0]["left"];
+      blocks?: typeof leaves[0]["leftBlocks"];
+      pageNumber: number;
+      leafIndex: number;
+      date: string;
+      chapter: string;
+    }> = [];
+
+    leaves.forEach((leaf, leafIndex) => {
+      // Left page (Front)
+      pages.push({
+        id: `p-${leaf.pageNumber}-left`,
+        side: "left",
+        heading: leaf.chapter,
+        subheading: "Our Story",
+        messages: leaf.left,
+        blocks: leaf.leftBlocks,
+        pageNumber: leaf.pageNumber,
+        leafIndex,
+        date: leaf.date,
+        chapter: leaf.chapter,
+      });
+
+      // Right page (Back)
+      pages.push({
+        id: `p-${leaf.pageNumber}-right`,
+        side: "right",
+        heading: leaf.chapter,
+        subheading: "Our Story",
+        messages: leaf.right,
+        blocks: leaf.rightBlocks,
+        pageNumber: leaf.pageNumber + 1,
+        leafIndex,
+        date: leaf.date,
+        chapter: leaf.chapter,
+      });
+    });
+
+    return pages;
+  }, [leaves]);
+
+  console.log("OpenBook singlePages length:", singlePages.length);
+  if (singlePages.length > 0) {
+    console.log("OpenBook first page:", singlePages[0]);
+  }
+
+  const activePageIndex = Math.min(currentPageIndex, Math.max(0, singlePages.length - 1));
+  const activePage = singlePages[activePageIndex];
+  
+  const activeLeafIndex = activePage?.leafIndex ?? 0;
+
+  const flipNext = useCallback(() => {
+    bookRef.current?.pageFlip()?.flipNext();
+  }, []);
+
+  const flipPrev = useCallback(() => {
+    bookRef.current?.pageFlip()?.flipPrev();
+  }, []);
+
+  const turnToLeaf = useCallback(
+    (targetLeafIndex: number) => {
+      if (isMobile) {
+        const targetPage = singlePages.find((p) => p.leafIndex === targetLeafIndex);
+        if (targetPage) {
+          const el = document.getElementById(`page-${targetPage.pageNumber}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+      } else {
+        const targetPageIndex = targetLeafIndex * 2;
+        bookRef.current?.pageFlip()?.turnToPage(targetPageIndex);
+      }
+    },
+    [isMobile, singlePages],
+  );
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (!isMobile) {
+        if (e.key === "ArrowRight") flipNext();
+        if (e.key === "ArrowLeft") flipPrev();
+      }
       if (e.key === "/" || (e.key === "f" && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
         setSearch(true);
@@ -43,126 +137,170 @@ export function OpenBook() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [flipNext, flipPrev, isMobile]);
 
-  const goToLeaf = (target: number) => turnToIndex(target * sheetsPerLeaf);
+  const canPrev = currentPageIndex > 0;
+  const canNext = currentPageIndex < singlePages.length - 1;
 
   return (
-    <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-6">
-      {/* Toolbar */}
-      <div className="mb-6 flex items-center justify-between gap-3">
-        <button
-          type="button"
-          onClick={() => setContents(true)}
-          className="flex items-center gap-2 rounded-full border border-gold-deep/40 bg-leather-deep/60 px-4 py-2 font-body text-[0.65rem] uppercase tracking-[0.28em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70"
-        >
-          <HiOutlineListBullet className="size-4" /> Contents
-        </button>
+    <div className="relative mx-auto w-full max-w-6xl px-3 pb-16 pt-4 sm:px-6">
+      {/* Screen Reader ARIA Live Announcement */}
+      <div className="sr-only" aria-live="polite">
+        Page {activePage?.pageNumber ?? "?"} of {totalPages}, {activePage?.chapter ?? ""} - {activePage?.date ?? ""}
+      </div>
+
+      {/* Toolbar - Sticky on mobile for effortless navigation while scrolling */}
+      <div className="sticky top-2 z-40 mb-5 flex items-center justify-between gap-2 rounded-full border border-gold-deep/30 bg-leather-deep/90 px-3 py-2 sm:static sm:bg-transparent sm:border-0 sm:px-0 sm:py-0 sm:mb-6 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex items-center gap-1.5 rounded-full border border-gold-deep/40 bg-leather-deep/70 px-3.5 py-1.5 sm:py-2 font-body text-[0.65rem] uppercase tracking-[0.22em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70 hover:bg-leather/80"
+              title="Close book and return to cover"
+            >
+              <HiOutlineBookOpen className="size-4" /> Close
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setContents(true)}
+            className="flex items-center gap-1.5 rounded-full border border-gold-deep/40 bg-leather-deep/70 px-3.5 py-1.5 sm:py-2 sm:px-4 font-body text-[0.65rem] uppercase tracking-[0.28em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70 hover:bg-leather/80"
+          >
+            <HiOutlineListBullet className="size-4" /> Contents
+          </button>
+        </div>
+
         <p className="hidden font-script text-sm italic text-muted-foreground sm:block">
-          {leaf.date} · {leaf.chapter}
+          {activePage?.date ?? ""} · {activePage?.chapter ?? ""}
         </p>
+
         <button
           type="button"
           onClick={() => setSearch(true)}
-          className="flex items-center gap-2 rounded-full border border-gold-deep/40 bg-leather-deep/60 px-4 py-2 font-body text-[0.65rem] uppercase tracking-[0.28em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70"
+          className="flex items-center gap-1.5 rounded-full border border-gold-deep/40 bg-leather-deep/70 px-3.5 py-1.5 sm:py-2 sm:px-4 font-body text-[0.65rem] uppercase tracking-[0.28em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70 hover:bg-leather/80"
         >
           <HiMagnifyingGlass className="size-4" /> Search
         </button>
       </div>
 
-      {/* Book body */}
-      <div className="relative" style={{ perspective: "2400px" }}>
-        <BookControls onPrev={flipPrev} onNext={flipNext} canPrev={canPrev} canNext={canNext} />
-
-        <Ribbon
-          active={bookmarked === leafIndex}
-          onToggle={() => setBookmarked((b) => (b === leafIndex ? null : leafIndex))}
-          className="right-10 top-0 sm:right-16"
-        />
-
-        <motion.div
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.08}
-          onDragEnd={(_, info) => {
-            if (info.offset.x < -70) flipNext();
-            if (info.offset.x > 70) flipPrev();
-          }}
-          className="gpu surface-leather relative overflow-hidden rounded-xl border border-gold-deep/30 p-2 sm:p-3"
-          style={{ boxShadow: "var(--shadow-book)", touchAction: "pan-y" }}
-          initial={{ opacity: 0, y: 30, rotateX: 12 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="absolute inset-2 rounded-lg border border-gold/20 sm:inset-3" aria-hidden />
-
-          <div className="relative grid h-[74vh] min-h-[480px] grid-cols-1 overflow-hidden rounded-lg md:h-[78vh] md:grid-cols-2">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${index}-a`}
-                initial={{ opacity: 0, x: direction === "next" ? 24 : -24 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.55, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="h-full min-h-0 md:col-span-2 md:grid md:grid-cols-2"
-              >
-                {(!isMobile || mobileSide === "left") && (
-                  <BookPage
-                    side="left"
-                    heading={leaf.chapter}
-                    subheading="My messages"
-                    messages={leaf.left}
-                    pageNumber={leaf.pageNumber}
-                    totalPages={TOTAL_PAGES}
-                    highlight={highlight}
-                  />
-                )}
-                {(!isMobile || mobileSide === "right") && (
-                  <BookPage
-                    side="right"
-                    heading={leaf.chapter}
-                    subheading="Their messages"
-                    messages={leaf.right}
-                    pageNumber={leaf.pageNumber + 1}
-                    totalPages={TOTAL_PAGES}
-                    highlight={highlight}
-                  />
-                )}
-              </motion.div>
-            </AnimatePresence>
-
-            {/* spine shadow */}
+      {/* Book body container */}
+      {isMobile ? (
+        /* Mobile: Continuous natural vertical parchment scroll */
+        <div className="flex flex-col gap-6 w-full max-w-lg mx-auto pb-12">
+          {singlePages.map((p) => (
             <div
-              className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-10 -translate-x-1/2 md:block"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent, oklch(0.25 0.04 45 / 0.45) 40%, oklch(0.2 0.03 45 / 0.6) 50%, oklch(0.25 0.04 45 / 0.45) 60%, transparent)",
-              }}
-              aria-hidden
-            />
+              key={p.id}
+              id={`page-${p.pageNumber}`}
+              className="gpu surface-leather relative overflow-hidden rounded-xl border border-gold-deep/30 p-1.5 shadow-2xl"
+              style={{ boxShadow: "var(--shadow-book)" }}
+            >
+              <div className="absolute inset-1.5 rounded-lg border border-gold/20 pointer-events-none z-20" aria-hidden />
+              <div className="relative overflow-hidden rounded-lg">
+                <BookPage
+                  side={p.side}
+                  heading={p.heading}
+                  subheading={p.subheading}
+                  messages={p.messages}
+                  blocks={p.blocks}
+                  pageNumber={p.pageNumber}
+                  totalPages={totalPages}
+                  highlight={highlight}
+                  className="min-h-[520px] h-auto"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        /* Desktop: 3D Flipbook Experience */
+        <div className="relative" style={{ perspective: "2400px" }}>
+          <BookControls onPrev={flipPrev} onNext={flipNext} canPrev={canPrev} canNext={canNext} />
 
-            <PageFlipSheet flipKey={flipKey} direction={direction} />
+          <Ribbon
+            active={bookmarked === activeLeafIndex}
+            onToggle={() => setBookmarked((b) => (b === activeLeafIndex ? null : activeLeafIndex))}
+            className="right-10 top-0 sm:right-16 z-30"
+          />
 
-            {/* corner drag / peel */}
-            <motion.button
-              type="button"
-              aria-label="Turn the page"
-              onClick={flipNext}
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.95 }}
-              className="absolute bottom-0 right-0 size-16 cursor-grab active:cursor-grabbing"
-              style={{
-                background:
-                  "linear-gradient(315deg, oklch(0.82 0.03 82) 0 42%, transparent 42.5%)",
-                filter: "drop-shadow(-4px -4px 8px oklch(0 0 0 / 0.35))",
-              }}
-            />
-          </div>
-        </motion.div>
-      </div>
+          <motion.div
+            className="gpu surface-leather relative overflow-hidden rounded-xl border border-gold-deep/30 p-1.5 sm:p-3 mx-auto w-full max-w-5xl"
+            style={{ boxShadow: "var(--shadow-book)" }}
+            initial={{ opacity: 0, y: 30, rotateX: 12 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="absolute inset-1.5 rounded-lg border border-gold/20 sm:inset-3 pointer-events-none z-20" aria-hidden />
 
-      <p className="mt-24 text-center font-body text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground md:mt-5">
-        Swipe, drag the corner, or use ← →
+            {/* HTMLFlipBook Physical 3D Engine Container */}
+            <div className="relative flex items-center justify-center h-[86vh] min-h-[520px] max-h-[840px] md:h-[95vh] md:min-h-[760px] md:max-h-none overflow-hidden rounded-lg">
+              <AnimatePresence>
+                {isPaginating && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 z-40 flex items-center justify-center bg-leather-deep/60 backdrop-blur-xs"
+                  >
+                    <p className="font-script text-sm italic text-gold tracking-widest animate-pulse">
+                      Paginating memories…
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* @ts-expect-error react-pageflip typings wrapper */}
+              <HTMLFlipBook
+                ref={bookRef}
+                width={540}
+                height={960}
+                size="stretch"
+                minWidth={320}
+                maxWidth={720}
+                minHeight={700}
+                maxHeight={1300}
+                maxShadowOpacity={0.8}
+                showCover={false}
+                mobileScrollSupport={true}
+                drawShadow={true}
+                flippingTime={900}
+                usePortrait={false}
+                startZIndex={1}
+                autoSize={true}
+                className="memory-flipbook flex items-center justify-center"
+                onFlip={(e: { data: number }) => setCurrentPageIndex(e.data)}
+              >
+                {singlePages.map((p) => (
+                  <BookPage
+                    key={p.id}
+                    side={p.side}
+                    heading={p.heading}
+                    subheading={p.subheading}
+                    messages={p.messages}
+                    blocks={p.blocks}
+                    pageNumber={p.pageNumber}
+                    totalPages={totalPages}
+                    highlight={highlight}
+                  />
+                ))}
+              </HTMLFlipBook>
+
+              {/* Central Spine shadow layer */}
+              <div
+                className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-10 -translate-x-1/2 md:block z-20"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent, oklch(0.25 0.04 45 / 0.45) 40%, oklch(0.2 0.03 45 / 0.6) 50%, oklch(0.25 0.04 45 / 0.45) 60%, transparent)",
+                }}
+                aria-hidden
+              />
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      <p className="mt-8 text-center font-body text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground md:mt-5">
+        {isMobile ? "Scroll down to explore our story" : "Drag page corners, swipe, or use ← →"}
       </p>
 
       <SearchOverlay
@@ -170,14 +308,16 @@ export function OpenBook() {
         onClose={() => setSearch(false)}
         onSelect={(target, term) => {
           setHighlight(term);
-          goToLeaf(target);
+          turnToLeaf(target);
         }}
+        searchFn={searchAdapter}
       />
       <ContentsDrawer
         open={contents}
         onClose={() => setContents(false)}
-        onSelect={goToLeaf}
-        currentIndex={leafIndex}
+        onSelect={turnToLeaf}
+        currentIndex={activeLeafIndex}
+        chapters={chapters}
       />
     </div>
   );

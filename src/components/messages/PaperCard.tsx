@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface PaperCardProps {
@@ -8,24 +8,30 @@ interface PaperCardProps {
   className?: string;
 }
 
-/** A message printed onto a small slip of paper, pressed into the page. */
-export function PaperCard({ children, time, author, className }: PaperCardProps) {
+/** Direct paper printing wrapper: NO chat bubbles, NO cards, NO background boxes. */
+export const PaperCard = memo(function PaperCard({
+  children,
+  time,
+  author,
+  className,
+}: PaperCardProps) {
   return (
-    <figure
+    <div
       className={cn(
-        "group relative max-w-[92%] rounded-2xl border px-4 py-3 transition-transform duration-500 ease-out sm:px-5 sm:py-4",
-        "border-ink/10 bg-paper",
-        author === "me" ? "mr-auto -rotate-[0.35deg]" : "ml-auto rotate-[0.35deg]",
-        "hover:-translate-y-0.5",
+        "relative max-w-[92%] py-0.5",
+        author === "me" ? "mr-auto text-left" : "ml-auto text-right",
         className,
       )}
-      style={{ boxShadow: "var(--shadow-note)" }}
     >
       <div className="text-ink">{children}</div>
-      <figcaption className="mt-2 flex items-center gap-2 font-body text-[0.65rem] uppercase tracking-[0.18em] text-ink-soft">
-        <span className="h-px w-4 bg-ink-soft/40" />
-        {time}
-      </figcaption>
-    </figure>
+      <div
+        className={cn(
+          "mt-1 flex items-center gap-1.5 font-body text-[0.65rem] tracking-widest text-ink-soft/70",
+          author === "me" ? "justify-start" : "justify-end",
+        )}
+      >
+        <span>{time}</span>
+      </div>
+    </div>
   );
-}
+});

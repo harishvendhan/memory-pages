@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, memo } from "react";
 
 interface DustParticlesProps {
   count?: number;
 }
 
-/** Floating dust motes drifting through the candlelight. Pure CSS, GPU friendly. */
-export function DustParticles({ count = 34 }: DustParticlesProps) {
+/** Floating dust motes drifting through the candlelight. Pure CSS, GPU friendly with layout containment. */
+export const DustParticles = memo(function DustParticles({ count = 34 }: DustParticlesProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -26,7 +26,11 @@ export function DustParticles({ count = 34 }: DustParticlesProps) {
   if (!mounted) return null;
 
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+    <div
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      style={{ contain: "layout style paint" }}
+      aria-hidden
+    >
       {motes.map((m) => (
         <span
           key={m.id}
@@ -44,4 +48,4 @@ export function DustParticles({ count = 34 }: DustParticlesProps) {
       ))}
     </div>
   );
-}
+});

@@ -1,47 +1,29 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiMagnifyingGlass, HiXMark } from "react-icons/hi2";
-import { leaves } from "@/data/conversation";
+import type { SearchHit, BookLeaf } from "@/types/conversation";
 
 interface SearchOverlayProps {
   open: boolean;
   onClose: () => void;
   onSelect: (leafIndex: number, term: string) => void;
+  searchFn?: (term: string) => SearchHit[];
 }
 
-interface Hit {
-  leafIndex: number;
-  page: number;
-  chapter: string;
-  author: "me" | "them";
-  excerpt: string;
-}
-
-/** Frontend-only search across the placeholder conversation. */
-export function SearchOverlay({ open, onClose, onSelect }: SearchOverlayProps) {
+/** Frontend-only search overlay with full accessibility support. */
+export function SearchOverlay({ open, onClose, onSelect, searchFn }: SearchOverlayProps) {
   const [term, setTerm] = useState("");
 
-  const hits = useMemo<Hit[]>(() => {
+  const hits = useMemo<SearchHit[]>(() => {
     const q = term.trim().toLowerCase();
     if (q.length < 2) return [];
-    const found: Hit[] = [];
-    leaves.forEach((leaf, leafIndex) => {
-      [...leaf.left, ...leaf.right].forEach((m) => {
-        const text =
-          m.type === "text" ? m.text : "caption" in m && m.caption ? m.caption : "";
-        if (text.toLowerCase().includes(q)) {
-          found.push({
-            leafIndex,
-            page: leaf.pageNumber,
-            chapter: leaf.chapter,
-            author: m.author,
-            excerpt: text,
-          });
-        }
-      });
-    });
-    return found;
-  }, [term]);
+
+    if (searchFn) {
+      return searchFn(q);
+    }
+
+    return [];
+  }, [term, searchFn]);
 
   return (
     <AnimatePresence>
@@ -51,6 +33,9 @@ export function SearchOverlay({ open, onClose, onSelect }: SearchOverlayProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Search conversation"
         >
           <div
             className="absolute inset-0 bg-leather-deep/80 backdrop-blur-md"
@@ -72,6 +57,7 @@ export function SearchOverlay({ open, onClose, onSelect }: SearchOverlayProps) {
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
                 placeholder="Search every word you ever wrote…"
+                aria-label="Search text input"
                 className="w-full bg-transparent font-display text-lg text-ink outline-none placeholder:text-ink-soft/70"
               />
               <button type="button" onClick={onClose} aria-label="Close search">
@@ -104,7 +90,7 @@ export function SearchOverlay({ open, onClose, onSelect }: SearchOverlayProps) {
                       {hit.excerpt}
                     </p>
                     <span className="font-body text-[0.6rem] uppercase tracking-[0.2em] text-gold-deep">
-                      {hit.author === "me" ? "Written by me" : "Written by them"}
+                      {hit.author === "me" ? "Written by Me" : "Written by You"}
                     </span>
                   </button>
                 ))

@@ -9,7 +9,7 @@ interface BookControlsProps {
 }
 
 const base =
-  "grid size-12 place-items-center rounded-full border border-gold-deep/40 bg-leather-deep/70 text-gold backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-gold/70 disabled:opacity-25 disabled:hover:scale-100";
+  "grid size-10 sm:size-12 place-items-center rounded-full border border-gold-deep/40 bg-leather-deep/70 text-gold backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-gold/70 disabled:opacity-25 disabled:hover:scale-100";
 
 export function BookControls({ onPrev, onNext, canPrev, canNext }: BookControlsProps) {
   return (
@@ -21,10 +21,10 @@ export function BookControls({ onPrev, onNext, canPrev, canNext }: BookControlsP
         aria-label="Previous page"
         className={cn(
           base,
-          "absolute bottom-[-4rem] left-[28%] z-20 md:bottom-auto md:left-2 md:top-1/2 md:-translate-y-1/2 lg:-left-20",
+          "absolute bottom-[-3.5rem] left-[22%] sm:left-[28%] z-20 md:bottom-auto md:left-2 md:top-1/2 md:-translate-y-1/2 lg:-left-20",
         )}
       >
-        <HiChevronLeft className="size-6" />
+        <HiChevronLeft className="size-5 sm:size-6" />
       </button>
       <button
         type="button"
@@ -33,10 +33,10 @@ export function BookControls({ onPrev, onNext, canPrev, canNext }: BookControlsP
         aria-label="Next page"
         className={cn(
           base,
-          "absolute bottom-[-4rem] right-[28%] z-20 md:bottom-auto md:right-2 md:top-1/2 md:-translate-y-1/2 lg:-right-20",
+          "absolute bottom-[-3.5rem] right-[22%] sm:right-[28%] z-20 md:bottom-auto md:right-2 md:top-1/2 md:-translate-y-1/2 lg:-right-20",
         )}
       >
-        <HiChevronRight className="size-6" />
+        <HiChevronRight className="size-5 sm:size-6" />
       </button>
     </>
   );
