@@ -43,7 +43,7 @@ export function BookCover({ opening, onOpen }: BookCoverProps) {
             : { rotateY: 0, rotateX: 6, opacity: 1 }
         }
         transition={{ duration: 1.8, ease: [0.32, 0, 0.2, 1] }}
-        whileHover={opening ? undefined : { rotateY: -8, rotateX: 3, scale: 1.015 }}
+        whileHover={opening ? {} : { rotateY: -8, rotateX: 3, scale: 1.015 }}
       >
         {/* spine */}
         <div
