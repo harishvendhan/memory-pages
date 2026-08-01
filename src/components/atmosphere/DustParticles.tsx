@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface DustParticlesProps {
   count?: number;
@@ -6,6 +6,9 @@ interface DustParticlesProps {
 
 /** Floating dust motes drifting through the candlelight. Pure CSS, GPU friendly. */
 export function DustParticles({ count = 34 }: DustParticlesProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const motes = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => ({
@@ -19,6 +22,8 @@ export function DustParticles({ count = 34 }: DustParticlesProps) {
       })),
     [count],
   );
+
+  if (!mounted) return null;
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
