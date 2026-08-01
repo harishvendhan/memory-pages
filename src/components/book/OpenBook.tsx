@@ -161,7 +161,7 @@ export function OpenBook() {
         </motion.div>
       </div>
 
-      <p className="mt-5 text-center font-body text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
+      <p className="mt-24 text-center font-body text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground md:mt-5">
         Swipe, drag the corner, or use ← →
       </p>
 

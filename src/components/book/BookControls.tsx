@@ -19,7 +19,10 @@ export function BookControls({ onPrev, onNext, canPrev, canNext }: BookControlsP
         onClick={onPrev}
         disabled={!canPrev}
         aria-label="Previous page"
-        className={cn(base, "absolute left-2 top-1/2 z-20 -translate-y-1/2 lg:-left-20")}
+        className={cn(
+          base,
+          "absolute bottom-[-4rem] left-[28%] z-20 md:bottom-auto md:left-2 md:top-1/2 md:-translate-y-1/2 lg:-left-20",
+        )}
       >
         <HiChevronLeft className="size-6" />
       </button>
@@ -28,7 +31,10 @@ export function BookControls({ onPrev, onNext, canPrev, canNext }: BookControlsP
         onClick={onNext}
         disabled={!canNext}
         aria-label="Next page"
-        className={cn(base, "absolute right-2 top-1/2 z-20 -translate-y-1/2 lg:-right-20")}
+        className={cn(
+          base,
+          "absolute bottom-[-4rem] right-[28%] z-20 md:bottom-auto md:right-2 md:top-1/2 md:-translate-y-1/2 lg:-right-20",
+        )}
       >
         <HiChevronRight className="size-6" />
       </button>
