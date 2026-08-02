@@ -45,6 +45,7 @@ export interface PhotoMessageData extends BaseMessage {
 export interface VoiceMessageData extends BaseMessage {
   type: "voice";
   duration: string;
+  src?: string | undefined;
   caption?: string | undefined;
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiMagnifyingGlass, HiOutlineListBullet, HiOutlineBookOpen } from "react-icons/hi2";
+import { HiMagnifyingGlass, HiOutlineListBullet, HiOutlineBookOpen, HiHome, HiArrowUp } from "react-icons/hi2";
 import { useMemoryBook } from "@/hooks/useMemoryBook";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BookPage } from "./BookPage";
@@ -35,6 +35,15 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
   const [contents, setContents] = useState(false);
   const [highlight, setHighlight] = useState<string>("");
   const [bookmarked, setBookmarked] = useState<number | null>(null);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollToTop(window.scrollY > 250);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Flatten leaves into single pages for continuous chronological reading
   const singlePages = useMemo(() => {
@@ -102,6 +111,15 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
     bookRef.current?.pageFlip()?.flipPrev();
   }, []);
 
+  const goToFirstPage = useCallback(() => {
+    if (isMobile) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      bookRef.current?.pageFlip()?.turnToPage(0);
+      setCurrentPageIndex(0);
+    }
+  }, [isMobile]);
+
   const turnToLeaf = useCallback(
     (targetLeafIndex: number) => {
       if (isMobile) {
@@ -118,6 +136,35 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
       }
     },
     [isMobile, singlePages],
+  );
+
+  const turnToPage = useCallback(
+    (targetPageNumber: number) => {
+      const clamped = Math.max(1, Math.min(totalPages, targetPageNumber));
+      if (isMobile) {
+        const targetPage =
+          singlePages.find((p) => p.pageNumber === clamped) ||
+          singlePages.find((p) => p.pageNumber >= clamped) ||
+          singlePages[0];
+        if (targetPage) {
+          const el = document.getElementById(`page-${targetPage.pageNumber}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+      } else {
+        const pageIndex = singlePages.findIndex((p) => p.pageNumber === clamped);
+        if (pageIndex !== -1) {
+          bookRef.current?.pageFlip()?.turnToPage(pageIndex);
+          setCurrentPageIndex(pageIndex);
+        } else {
+          const fallbackIndex = Math.max(0, clamped - 1);
+          bookRef.current?.pageFlip()?.turnToPage(fallbackIndex);
+          setCurrentPageIndex(fallbackIndex);
+        }
+      }
+    },
+    [isMobile, singlePages, totalPages],
   );
 
   useEffect(() => {
@@ -151,21 +198,29 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
 
       {/* Toolbar - Sticky on mobile for effortless navigation while scrolling */}
       <div className="sticky top-2 z-40 mb-5 flex items-center justify-between gap-2 rounded-full border border-gold-deep/30 bg-leather-deep/90 px-3 py-2 sm:static sm:bg-transparent sm:border-0 sm:px-0 sm:py-0 sm:mb-6 backdrop-blur-md">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {onClose && (
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center gap-1.5 rounded-full border border-gold-deep/40 bg-leather-deep/70 px-3.5 py-1.5 sm:py-2 font-body text-[0.65rem] uppercase tracking-[0.22em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70 hover:bg-leather/80"
+              className="flex items-center gap-1.5 rounded-full border border-gold-deep/40 bg-leather-deep/70 px-3 py-1.5 sm:py-2 font-body text-[0.65rem] uppercase tracking-[0.22em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70 hover:bg-leather/80"
               title="Close book and return to cover"
             >
-              <HiOutlineBookOpen className="size-4" /> Close
+              <HiOutlineBookOpen className="size-4" /> Cover
             </button>
           )}
           <button
             type="button"
+            onClick={goToFirstPage}
+            className="flex items-center gap-1.5 rounded-full border border-gold-deep/40 bg-leather-deep/70 px-3 py-1.5 sm:py-2 font-body text-[0.65rem] uppercase tracking-[0.22em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70 hover:bg-leather/80"
+            title="Go to First Page"
+          >
+            <HiHome className="size-3.5" /> First Page
+          </button>
+          <button
+            type="button"
             onClick={() => setContents(true)}
-            className="flex items-center gap-1.5 rounded-full border border-gold-deep/40 bg-leather-deep/70 px-3.5 py-1.5 sm:py-2 sm:px-4 font-body text-[0.65rem] uppercase tracking-[0.28em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70 hover:bg-leather/80"
+            className="flex items-center gap-1.5 rounded-full border border-gold-deep/40 bg-leather-deep/70 px-3 py-1.5 sm:py-2 sm:px-4 font-body text-[0.65rem] uppercase tracking-[0.28em] text-gold backdrop-blur-sm transition-colors hover:border-gold/70 hover:bg-leather/80"
           >
             <HiOutlineListBullet className="size-4" /> Contents
           </button>
@@ -267,6 +322,8 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
                 usePortrait={false}
                 startZIndex={1}
                 autoSize={true}
+                clickEventForward={true}
+                disableFlipByClick={true}
                 className="memory-flipbook flex items-center justify-center"
                 onFlip={(e: { data: number }) => setCurrentPageIndex(e.data)}
               >
@@ -310,7 +367,13 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
           setHighlight(term);
           turnToLeaf(target);
         }}
+        onSelectPage={(targetPage) => {
+          setHighlight("");
+          turnToPage(targetPage);
+        }}
         searchFn={searchAdapter}
+        totalPages={totalPages}
+        pages={singlePages}
       />
       <ContentsDrawer
         open={contents}
@@ -319,6 +382,38 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
         currentIndex={activeLeafIndex}
         chapters={chapters}
       />
+
+      {/* Floating Quick Action Pill when scrolled down */}
+      <AnimatePresence>
+        {showScrollToTop && (
+          <motion.div
+            initial={{ opacity: 0, y: 25, scale: 0.88 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 25, scale: 0.88 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed bottom-5 right-4 z-50 flex items-center gap-2 shadow-2xl sm:bottom-7 sm:right-7 select-none"
+          >
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex items-center gap-1.5 rounded-full border border-gold-deep/50 bg-leather-deep/95 px-3 py-2 font-body text-[0.68rem] uppercase tracking-[0.2em] text-gold shadow-[0_4px_16px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all hover:scale-105 hover:border-gold hover:bg-leather active:scale-95 cursor-pointer"
+                title="Return to Book Cover"
+              >
+                <HiOutlineBookOpen className="size-4" /> Cover
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={goToFirstPage}
+              className="flex items-center gap-1.5 rounded-full border border-gold-deep/60 bg-gradient-to-r from-[#3c2a1e] via-[#2a1d15] to-[#3c2a1e] px-3.5 py-2 font-body text-[0.7rem] font-medium uppercase tracking-[0.22em] text-gold shadow-[0_6px_20px_rgba(0,0,0,0.6),0_0_12px_rgba(200,153,56,0.3)] backdrop-blur-md transition-all hover:scale-105 hover:border-gold hover:text-white active:scale-95 cursor-pointer"
+              title="Back to First Page"
+            >
+              <HiArrowUp className="size-4 animate-bounce" /> First Page
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

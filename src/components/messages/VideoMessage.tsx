@@ -31,14 +31,18 @@ export const VideoMessage = memo(function VideoMessage({
         <div className="absolute inset-0 bg-leather-deep/25" />
         <button
           type="button"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
           aria-label="Play video memory"
-          className="absolute inset-0 grid place-items-center"
+          className="absolute inset-0 grid place-items-center cursor-pointer"
         >
           <span
-            className="grid size-14 place-items-center rounded-full text-gold-foreground transition-transform duration-300 group-hover:scale-110"
+            className="pointer-events-none grid size-14 place-items-center rounded-full text-gold-foreground transition-transform duration-300 group-hover:scale-110"
             style={{ backgroundImage: "var(--gradient-gold)", boxShadow: "var(--shadow-gold-glow)" }}
           >
-            <HiMiniPlay className="ml-1 size-6" />
+            <HiMiniPlay className="ml-1 size-6 pointer-events-none" />
           </span>
         </button>
         <span className="absolute bottom-2 right-2 rounded bg-leather-deep/70 px-2 py-0.5 font-body text-[0.65rem] tracking-widest text-paper">

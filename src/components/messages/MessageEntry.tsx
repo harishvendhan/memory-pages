@@ -82,7 +82,12 @@ export const MessageEntry = memo(function MessageEntry({
       case "voice":
         return (
           <div className="mt-1">
-            <VoiceMessage id={message.id} duration={message.duration} caption={message.caption} />
+            <VoiceMessage
+              id={message.id}
+              src={message.src}
+              duration={message.duration}
+              caption={message.caption}
+            />
           </div>
         );
 

@@ -143,6 +143,7 @@ export class InstagramConversationAdapter implements IMemoryBookAdapter {
         return {
           ...base,
           type: "voice",
+          src: raw.mediaUrl,
           duration: raw.mediaDuration ?? "0:00",
           caption: raw.content,
         };

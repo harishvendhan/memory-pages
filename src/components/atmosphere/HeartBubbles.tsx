@@ -4,28 +4,42 @@ interface HeartBubblesProps {
   count?: number;
 }
 
+const NICKNAMES = [
+  { text: "meow", emoji: "🐾" },
+  { text: "podusu", emoji: "✨" },
+  { text: "papa", emoji: "💖" },
+  { text: "kutty ma", emoji: "🌸" },
+  { text: "chellow", emoji: "💕" },
+];
+
 /**
- * Romantic translucent glowing heart bubbles drifting gently upwards in the background.
+ * Romantic translucent glowing heart bubbles & floating nickname words drifting gently upwards in the background.
  * Pure GPU accelerated CSS animation with layout containment.
  */
-export const HeartBubbles = memo(function HeartBubbles({ count = 38 }: HeartBubblesProps) {
+export const HeartBubbles = memo(function HeartBubbles({ count = 42 }: HeartBubblesProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   const bubbles = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => {
+        const itemType: "word" | "bubble" | "heart" =
+          i % 3 === 0 ? "word" : i % 3 === 1 ? "bubble" : "heart";
+        
+        const nickname = NICKNAMES[Math.floor(i / 3) % NICKNAMES.length] ?? NICKNAMES[0]!;
         const size = 14 + (i % 5) * 6; // 14px to 38px
-        const delay = (i * 0.3 + Math.random() * 1.8) % 7;
-        const duration = 5.5 + (i % 5) * 1.2 + Math.random() * 1.5; // 5.5s - 12s (fast & lively)
-        const left = ((i * 3.7 + 7) % 96) + Math.random() * 2;
+        const delay = (i * 0.35 + Math.random() * 1.8) % 8;
+        const duration = 6.5 + (i % 5) * 1.3 + Math.random() * 2; // 6.5s - 14s
+        const left = ((i * 4.2 + 5) % 92) + Math.random() * 3;
         const drift = `${(Math.random() - 0.5) * 160}px`;
-        const rotation = `${(Math.random() - 0.5) * 36}deg`;
-        const opacity = 0.3 + Math.random() * 0.5;
-        const isBubble = i % 2 === 0;
+        const rotation = `${(Math.random() - 0.5) * 24}deg`;
+        const opacity = itemType === "word" ? 0.5 + Math.random() * 0.4 : 0.3 + Math.random() * 0.5;
 
         return {
           id: i,
+          type: itemType,
+          word: nickname.text,
+          emoji: nickname.emoji,
           left,
           size,
           delay,
@@ -33,7 +47,6 @@ export const HeartBubbles = memo(function HeartBubbles({ count = 38 }: HeartBubb
           drift,
           rotation,
           opacity,
-          isBubble,
         };
       }),
     [count],
@@ -53,15 +66,25 @@ export const HeartBubbles = memo(function HeartBubbles({ count = 38 }: HeartBubb
           className="gpu absolute bottom-[-8vh] flex items-center justify-center pointer-events-none select-none"
           style={{
             left: `${b.left}%`,
-            width: b.size,
-            height: b.size,
+            width: b.type === "word" ? "auto" : b.size,
+            height: b.type === "word" ? "auto" : b.size,
             animation: `heart-float ${b.duration}s ease-in-out ${b.delay}s infinite`,
             ["--heart-x" as string]: b.drift,
             ["--heart-rot" as string]: b.rotation,
             ["--heart-opacity" as string]: b.opacity,
           }}
         >
-          {b.isBubble ? (
+          {b.type === "word" ? (
+            /* Floating luminous nickname capsule */
+            <div className="flex items-center gap-1.5 rounded-full border border-pink-300/40 bg-gradient-to-r from-pink-500/20 via-rose-400/15 to-amber-500/20 px-3 py-1 shadow-[0_0_14px_rgba(244,114,182,0.45),inset_0_0_6px_rgba(255,255,255,0.4)] backdrop-blur-[2px] whitespace-nowrap">
+              <span className="font-display italic font-medium text-xs sm:text-sm tracking-wide text-[#fce7f3] drop-shadow-[0_0_8px_rgba(244,114,182,0.85)]">
+                {b.word}
+              </span>
+              <span className="text-[10px] sm:text-xs opacity-90 drop-shadow-[0_0_6px_rgba(244,114,182,0.6)]">
+                {b.emoji}
+              </span>
+            </div>
+          ) : b.type === "bubble" ? (
             /* Glassmorphic bubble enclosing a luminous heart */
             <div
               className="relative flex items-center justify-center rounded-full"
