@@ -3,6 +3,7 @@ import woodTable from "@/assets/wood-table.jpg";
 import { DustParticles } from "./DustParticles";
 import { HeartBubbles } from "./HeartBubbles";
 import { MobileSideBubbles } from "./MobileSideBubbles";
+import { RunningCatCoupleShades } from "./RunningCatCoupleShades";
 
 /** The dark room: wooden table, candle glow, romantic heart bubbles, dust and vignette. */
 export function RoomBackdrop({ children }: { children: ReactNode }) {
@@ -33,6 +34,7 @@ export function RoomBackdrop({ children }: { children: ReactNode }) {
       <DustParticles />
       <HeartBubbles />
       <MobileSideBubbles />
+      <RunningCatCoupleShades opacity={0.35} />
       <div className="relative z-10">{children}</div>
     </div>
   );

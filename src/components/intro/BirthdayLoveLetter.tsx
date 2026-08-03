@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import paperTexture from "@/assets/paper.jpg";
+import { RunningCatCoupleShades } from "@/components/atmosphere/RunningCatCoupleShades";
 
 export interface BirthdayLoveLetterProps {
   onComplete: () => void;
@@ -32,25 +33,25 @@ const LETTER_PAGES: LetterPage[] = [
       {
         text: "❤️ For Jasmeena Farveen (My Meow Kutty 🐾) ❤️",
         isTitle: true,
-        pauseAfterMs: 700,
+        pauseAfterMs: 900,
       },
       {
         text: "My Lovable Meow Kutty 🐱💕,",
         isSalutation: true,
-        pauseAfterMs: 900,
+        pauseAfterMs: 1100,
       },
       {
         text: "If you're reading this... it means you've just opened a little piece of my heart. 💌✨",
-        pauseAfterMs: 1000,
+        pauseAfterMs: 1300,
       },
       {
         text: "Today is your birthday... and I wanted to give you something that isn't bought from a store... 🎁",
-        pauseAfterMs: 1000,
+        pauseAfterMs: 1300,
       },
       {
         text: "something that no price could ever define. 💖",
         isClosing: true,
-        pauseAfterMs: 1400,
+        pauseAfterMs: 1800,
       },
     ],
   },
@@ -62,32 +63,32 @@ const LETTER_PAGES: LetterPage[] = [
     lines: [
       {
         text: "Every smile we shared... 😊",
-        pauseAfterMs: 600,
+        pauseAfterMs: 850,
       },
       {
         text: "every random conversation... 💬",
-        pauseAfterMs: 600,
+        pauseAfterMs: 850,
       },
       {
         text: "every late-night chat... 🌙",
-        pauseAfterMs: 600,
+        pauseAfterMs: 850,
       },
       {
         text: "every moment of happiness... 🥰",
-        pauseAfterMs: 600,
+        pauseAfterMs: 850,
       },
       {
         text: "every misunderstanding that made us stronger... 🥺🫂",
-        pauseAfterMs: 800,
+        pauseAfterMs: 1000,
       },
       {
         text: "and every memory that made us \"us\"... 🌸",
-        pauseAfterMs: 800,
+        pauseAfterMs: 1000,
       },
       {
         text: "deserves to live forever. ✨",
         isClosing: true,
-        pauseAfterMs: 1400,
+        pauseAfterMs: 1800,
       },
     ],
   },
@@ -99,20 +100,20 @@ const LETTER_PAGES: LetterPage[] = [
     lines: [
       {
         text: "Phones can be changed. Chats can disappear. Time keeps moving forward. ⏳",
-        pauseAfterMs: 1000,
+        pauseAfterMs: 1300,
       },
       {
         text: "But love... and the memories created with it... should never be forgotten. 💫",
-        pauseAfterMs: 1100,
+        pauseAfterMs: 1400,
       },
       {
         text: "That's why I gathered every little memory I could... 📸",
-        pauseAfterMs: 900,
+        pauseAfterMs: 1100,
       },
       {
         text: "and carefully turned them into this book for you. 📖❤️",
         isClosing: true,
-        pauseAfterMs: 1400,
+        pauseAfterMs: 1800,
       },
     ],
   },
@@ -124,24 +125,24 @@ const LETTER_PAGES: LetterPage[] = [
     lines: [
       {
         text: "As you turn these pages... I hope you smile at the moments we've shared. 🥹",
-        pauseAfterMs: 1000,
+        pauseAfterMs: 1300,
       },
       {
         text: "I hope you laugh at our silly conversations. I hope you remember how beautiful our journey has been. 🐱🐾",
-        pauseAfterMs: 1100,
+        pauseAfterMs: 1400,
       },
       {
         text: "And whenever life feels difficult... I hope this little book reminds you that... 🫂",
-        pauseAfterMs: 1000,
+        pauseAfterMs: 1300,
       },
       {
         text: "there will always be someone who treasures every single memory with you. 💖",
-        pauseAfterMs: 1200,
+        pauseAfterMs: 1500,
       },
       {
         text: "This is a collection of moments that made me grateful that our paths crossed. 🌷",
         isClosing: true,
-        pauseAfterMs: 1400,
+        pauseAfterMs: 1800,
       },
     ],
   },
@@ -153,30 +154,30 @@ const LETTER_PAGES: LetterPage[] = [
     lines: [
       {
         text: "So today... on your special day... I have only one wish... 🎂",
-        pauseAfterMs: 800,
+        pauseAfterMs: 1100,
       },
       {
         text: "May your smile always stay as radiant and beautiful as ever. 🌟",
-        pauseAfterMs: 900,
+        pauseAfterMs: 1200,
       },
       {
         text: "🎂 Happy Birthday, My Lovable Meow Kutty! 🐱💖🎉",
         isBirthdayHighlight: true,
-        pauseAfterMs: 1200,
+        pauseAfterMs: 1500,
       },
       {
         text: "Thank you for being the most precious chapter of my life. 🌹",
-        pauseAfterMs: 1000,
+        pauseAfterMs: 1300,
       },
       {
         text: "❤️ Epadiku Unavan ❤️",
         isSignature: true,
-        pauseAfterMs: 1200,
+        pauseAfterMs: 1500,
       },
       {
         text: "💖 I Love You Jasmeena Farveen 💖",
         isLoveDeclaration: true,
-        pauseAfterMs: 2500,
+        pauseAfterMs: 3500,
       },
     ],
   },
@@ -258,7 +259,7 @@ export function BirthdayLoveLetter({ onComplete }: BirthdayLoveLetterProps) {
     setRevealedCharCount(9999);
   };
 
-  // Buttery-smooth, consistent fluid typewriter engine
+  // Buttery-smooth, gently paced typewriter engine
   useEffect(() => {
     if (isManualMode) return;
     isCancelledRef.current = false;
@@ -289,8 +290,8 @@ export function BirthdayLoveLetter({ onComplete }: BirthdayLoveLetterProps) {
             setCurrentPageIdx(pIdx);
             setCurrentLineIdx(0);
             setRevealedCharCount(0);
-            timeoutId = setTimeout(tick, 600);
-          }, 2200);
+            timeoutId = setTimeout(tick, 700);
+          }, 3000);
         }
         return;
       }
@@ -298,11 +299,11 @@ export function BirthdayLoveLetter({ onComplete }: BirthdayLoveLetterProps) {
       if (charCount < currentChars.length) {
         charCount++;
         setRevealedCharCount(charCount);
-        // Silky smooth constant cadence ~28ms
-        timeoutId = setTimeout(tick, 28);
+        // Gently paced typing speed ~46ms for clear, comfortable reading
+        timeoutId = setTimeout(tick, 46);
       } else {
-        // Line complete -> pause slightly before next line
-        const pauseTime = page.lines[lIdx]?.pauseAfterMs ?? 800;
+        // Line complete -> pause comfortably before next line
+        const pauseTime = page.lines[lIdx]?.pauseAfterMs ?? 1000;
         lIdx++;
         charCount = 0;
         timeoutId = setTimeout(() => {
@@ -314,7 +315,7 @@ export function BirthdayLoveLetter({ onComplete }: BirthdayLoveLetterProps) {
       }
     };
 
-    timeoutId = setTimeout(tick, 250);
+    timeoutId = setTimeout(tick, 350);
 
     return () => {
       isCancelledRef.current = true;
@@ -386,6 +387,9 @@ export function BirthdayLoveLetter({ onComplete }: BirthdayLoveLetterProps) {
           />
         ))}
       </div>
+
+      {/* Cute Romantic Cat Couple Running in the Background Like Shades */}
+      <RunningCatCoupleShades opacity={0.45} />
 
       {/* Skip to Book Button Top Right */}
       <button
@@ -586,7 +590,6 @@ export function BirthdayLoveLetter({ onComplete }: BirthdayLoveLetterProps) {
                         </motion.span>
                         <span>
                           {chars.map((char, cIdx) => {
-                            // Don't duplicate outer heart emojis if they are in the text
                             if (char === "💖") return null;
                             const isCharVisible = isPastLine || cIdx < revealedCharCount;
                             if (!isCharVisible) return null;
