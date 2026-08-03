@@ -86,14 +86,74 @@ export function BookCover({ opening, onOpen, onReadLetter }: BookCoverProps) {
             </button>
 
             {onReadLetter && (
-              <button
+              <motion.button
                 type="button"
                 onClick={onReadLetter}
-                className="group rounded-full border border-[#f472b6]/60 bg-[#831843]/30 px-6 py-2.5 font-body text-[0.68rem] uppercase tracking-[0.25em] text-pink-200 transition-all duration-300 hover:border-pink-300 hover:bg-[#831843]/50 shadow-md cursor-pointer flex items-center gap-1.5"
+                animate={{
+                  scale: [1, 1.08, 1, 1.12, 1],
+                  boxShadow: [
+                    "0 0 10px rgba(244,114,182,0.4), 0 0 0px rgba(244,114,182,0)",
+                    "0 0 25px rgba(244,114,182,0.85), 0 0 16px rgba(251,113,133,0.65)",
+                    "0 0 10px rgba(244,114,182,0.4), 0 0 0px rgba(244,114,182,0)",
+                    "0 0 34px rgba(244,114,182,1), 0 0 24px rgba(251,113,133,0.8)",
+                    "0 0 10px rgba(244,114,182,0.4), 0 0 0px rgba(244,114,182,0)",
+                  ],
+                }}
+                transition={{
+                  duration: 1.35,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.14, 0.28, 0.44, 0.72],
+                }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.94 }}
+                className="group relative rounded-full border-2 border-[#f472b6] bg-gradient-to-r from-[#9d174d] via-[#be185d] to-[#9d174d] px-6 py-2.5 font-body text-[0.72rem] uppercase tracking-[0.25em] text-pink-100 transition-all duration-300 hover:border-pink-200 hover:text-white cursor-pointer flex items-center gap-2 overflow-hidden shadow-lg"
               >
-                <span>💌</span>
-                <span>Birthday Letter</span>
-              </button>
+                {/* Heartbeat pulse wave ring effect */}
+                <motion.span
+                  animate={{
+                    scale: [0.95, 1.45, 0.95],
+                    opacity: [0.7, 0, 0.7],
+                  }}
+                  transition={{
+                    duration: 1.35,
+                    repeat: Infinity,
+                    ease: "easeOut",
+                    times: [0, 0.44, 1],
+                  }}
+                  className="absolute inset-0 rounded-full border border-pink-300 pointer-events-none"
+                />
+
+                <motion.span
+                  animate={{ scale: [1, 1.35, 1, 1.42, 1] }}
+                  transition={{
+                    duration: 1.35,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    times: [0, 0.14, 0.28, 0.44, 0.72],
+                  }}
+                  className="inline-block text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                >
+                  💌
+                </motion.span>
+
+                <span className="font-semibold tracking-[0.28em] drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">
+                  Birthday Letter
+                </span>
+
+                <motion.span
+                  animate={{ scale: [1, 1.4, 1, 1.48, 1] }}
+                  transition={{
+                    duration: 1.35,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    times: [0, 0.14, 0.28, 0.44, 0.72],
+                  }}
+                  className="inline-block text-sm text-pink-200 drop-shadow-[0_0_8px_rgba(244,114,182,1)]"
+                >
+                  ❤️
+                </motion.span>
+              </motion.button>
             )}
           </div>
         </div>
