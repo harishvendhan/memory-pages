@@ -5,6 +5,7 @@ import { RoomBackdrop } from "@/components/atmosphere/RoomBackdrop";
 import { BookCover } from "@/components/book/BookCover";
 import { OpenBook } from "@/components/book/OpenBook";
 import { LoveMessageModal } from "@/components/book/LoveMessageModal";
+import { BirthdayLoveLetter } from "@/components/intro/BirthdayLoveLetter";
 import { useMemoryBook } from "@/hooks/useMemoryBook";
 import { loadPublicConversation } from "@/lib/publicConversationLoader";
 
@@ -44,6 +45,7 @@ type AppStage =
 
 function Index() {
   const [appStage, setAppStage] = useState<AppStage>("loading");
+  const [hasPlayedIntro, setHasPlayedIntro] = useState(false);
   const [showLovePopup, setShowLovePopup] = useState(false);
   const timerRef = useRef<number | null>(null);
 
@@ -163,7 +165,11 @@ function Index() {
               exit={{ opacity: 0, scale: 1.15 }}
               transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <BookCover opening={appStage === "opening"} onOpen={handleOpenClick} />
+              <BookCover
+                opening={appStage === "opening"}
+                onOpen={handleOpenClick}
+                onReadLetter={() => setHasPlayedIntro(false)}
+              />
               <p className="mt-4 font-body text-[0.62rem] uppercase tracking-[0.45em] text-muted-foreground">
                 Handbound · Volume One
               </p>
@@ -182,8 +188,12 @@ function Index() {
               <OpenBook memoryBook={memoryBook} onClose={handleCloseBook} />
             </motion.section>
           )}
-
         </AnimatePresence>
+
+        {/* Lovable Birthday Love Letter & Wishes (Words Slowly Appear on Paper) */}
+        {!hasPlayedIntro && appStage !== "loading" && appStage !== "not_found" && (
+          <BirthdayLoveLetter onComplete={() => setHasPlayedIntro(true)} />
+        )}
 
         {/* Romantic Pop-up Message from the middle */}
         <LoveMessageModal

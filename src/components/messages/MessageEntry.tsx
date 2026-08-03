@@ -184,10 +184,12 @@ export const MessageEntry = memo(function MessageEntry({
 
   return (
     <div
+      id={`msg-${message.id}`}
+      data-message-id={message.id}
       className={cn(
-        "relative flex w-full",
+        "relative flex w-full transition-all duration-300",
         isFirst ? "mt-0" : isDifferentAuthor ? "mt-7" : "mt-4",
-        isMe ? "justify-start" : "justify-end"
+        isMe ? "justify-start" : "justify-end",
       )}
     >
       {/* Delicate vintage section divider matching reference design */}

@@ -4,10 +4,11 @@ import leather from "@/assets/leather.jpg";
 interface BookCoverProps {
   opening: boolean;
   onOpen: () => void;
+  onReadLetter?: () => void;
 }
 
 /** The closed leather volume resting on the table. */
-export function BookCover({ opening, onOpen }: BookCoverProps) {
+export function BookCover({ opening, onOpen, onReadLetter }: BookCoverProps) {
   return (
     <div className="relative" style={{ perspective: "2000px" }}>
       {/* shadow pooled on the table */}
@@ -74,14 +75,27 @@ export function BookCover({ opening, onOpen }: BookCoverProps) {
           </p>
           <span className="mt-6 h-px w-16 bg-gold/50" />
 
-          <button
-            type="button"
-            onClick={onOpen}
-            className="group mt-10 rounded-full border border-gold/60 px-8 py-3 font-body text-[0.7rem] uppercase tracking-[0.35em] text-gold transition-all duration-500 hover:border-gold hover:tracking-[0.45em]"
-            style={{ boxShadow: "var(--shadow-gold-glow)" }}
-          >
-            Open Book
-          </button>
+          <div className="mt-8 flex flex-col sm:flex-row items-center gap-3">
+            <button
+              type="button"
+              onClick={onOpen}
+              className="group rounded-full border border-gold/60 bg-gold/10 px-7 py-2.5 font-body text-[0.7rem] uppercase tracking-[0.3em] text-gold transition-all duration-300 hover:border-gold hover:bg-gold/20 hover:tracking-[0.4em] shadow-md cursor-pointer"
+              style={{ boxShadow: "var(--shadow-gold-glow)" }}
+            >
+              Open Book 📖
+            </button>
+
+            {onReadLetter && (
+              <button
+                type="button"
+                onClick={onReadLetter}
+                className="group rounded-full border border-[#f472b6]/60 bg-[#831843]/30 px-6 py-2.5 font-body text-[0.68rem] uppercase tracking-[0.25em] text-pink-200 transition-all duration-300 hover:border-pink-300 hover:bg-[#831843]/50 shadow-md cursor-pointer flex items-center gap-1.5"
+              >
+                <span>💌</span>
+                <span>Birthday Letter</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* candle sheen */}

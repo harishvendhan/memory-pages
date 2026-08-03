@@ -7,7 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { BookPage } from "./BookPage";
 import { BookControls } from "./BookControls";
 import { Ribbon } from "./Ribbon";
-import { SearchOverlay } from "@/components/overlays/SearchOverlay";
+import { SearchDialog } from "@/components/search/SearchDialog";
 import { ContentsDrawer } from "@/components/overlays/ContentsDrawer";
 
 interface FlipBookRef {
@@ -165,6 +165,40 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
       }
     },
     [isMobile, singlePages, totalPages],
+  );
+
+  const allMessages = useMemo(() => {
+    const msgs: typeof leaves[0]["left"] = [];
+    leaves.forEach((l) => msgs.push(...l.left, ...l.right));
+    return msgs;
+  }, [leaves]);
+
+  const triggerMessageHighlight = useCallback((messageId: string) => {
+    // Small timeout to allow page flip / DOM update to settle
+    setTimeout(() => {
+      const el = document.querySelector(
+        `[data-message-id="${messageId}"], #msg-${messageId}`,
+      ) as HTMLElement | null;
+
+      if (el) {
+        el.classList.remove("golden-glow-highlight");
+        void el.offsetWidth; // Trigger reflow
+        el.classList.add("golden-glow-highlight");
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+        setTimeout(() => {
+          el.classList.remove("golden-glow-highlight");
+        }, 3000);
+      }
+    }, 280);
+  }, []);
+
+  const handleSearchNavigate = useCallback(
+    (targetPage: number, messageId: string) => {
+      turnToPage(targetPage);
+      triggerMessageHighlight(messageId);
+    },
+    [turnToPage, triggerMessageHighlight],
   );
 
   useEffect(() => {
@@ -360,20 +394,12 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
         {isMobile ? "Scroll down to explore our story" : "Drag page corners, swipe, or use ← →"}
       </p>
 
-      <SearchOverlay
-        open={search}
-        onClose={() => setSearch(false)}
-        onSelect={(target, term) => {
-          setHighlight(term);
-          turnToLeaf(target);
-        }}
-        onSelectPage={(targetPage) => {
-          setHighlight("");
-          turnToPage(targetPage);
-        }}
-        searchFn={searchAdapter}
-        totalPages={totalPages}
-        pages={singlePages}
+      <SearchDialog
+        messages={allMessages}
+        leaves={leaves}
+        isOpen={search}
+        onOpenChange={setSearch}
+        onNavigate={handleSearchNavigate}
       />
       <ContentsDrawer
         open={contents}
