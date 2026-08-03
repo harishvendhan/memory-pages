@@ -389,7 +389,7 @@ export function BirthdayLoveLetter({ onComplete }: BirthdayLoveLetterProps) {
       </div>
 
       {/* Cute Romantic Cat Couple Running in the Background Like Shades */}
-      <RunningCatCoupleShades opacity={0.45} />
+      <RunningCatCoupleShades opacity={0.88} />
 
       {/* Skip to Book Button Top Right */}
       <button
