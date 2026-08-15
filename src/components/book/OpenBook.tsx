@@ -322,7 +322,7 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
             <div className="absolute inset-1.5 rounded-lg border border-gold/20 sm:inset-3 pointer-events-none z-20" aria-hidden />
 
             {/* HTMLFlipBook Physical 3D Engine Container */}
-            <div className="relative flex items-center justify-center h-[86vh] min-h-[520px] max-h-[840px] md:h-[95vh] md:min-h-[760px] md:max-h-none overflow-hidden rounded-lg">
+            <div className="relative flex items-center justify-center h-[86vh] min-h-[520px] max-h-[840px] md:h-[88vh] md:min-h-[700px] md:max-h-none overflow-hidden rounded-lg">
               <AnimatePresence>
                 {isPaginating && (
                   <motion.div
@@ -342,12 +342,12 @@ export function OpenBook({ memoryBook, onClose }: OpenBookProps) {
               <HTMLFlipBook
                 ref={bookRef}
                 width={540}
-                height={960}
+                height={840}
                 size="stretch"
                 minWidth={320}
                 maxWidth={720}
-                minHeight={700}
-                maxHeight={1300}
+                minHeight={650}
+                maxHeight={1100}
                 maxShadowOpacity={0.8}
                 showCover={false}
                 mobileScrollSupport={true}

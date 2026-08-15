@@ -720,7 +720,7 @@ export function BirthdayLoveLetter({ onComplete }: BirthdayLoveLetterProps) {
                     </motion.button>
                   </motion.div>
                 ) : (
-                  /* ── UNLOCKED STATE: Grand Animated "I Love You Jasmeena 🥰" ── */
+                  /* ── UNLOCKED STATE: Grand Animated "i love you di pondati 😘" ── */
                   <motion.div
                     initial={{ scale: 0.85, opacity: 0, y: 15 }}
                     animate={{
@@ -766,8 +766,9 @@ export function BirthdayLoveLetter({ onComplete }: BirthdayLoveLetterProps) {
                         💖
                       </motion.span>
                       <span className="bg-gradient-to-r from-[#9d174d] via-[#e11d48] to-[#9d174d] bg-clip-text text-transparent">
-                        i love you jasmeena 🥰
+                        i love you di pondati
                       </span>
+                      <span>😘</span>
                       <motion.span
                         animate={{ scale: [1, 1.3, 1], rotate: [0, -8, 8, 0] }}
                         transition={{

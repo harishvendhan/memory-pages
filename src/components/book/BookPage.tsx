@@ -93,8 +93,39 @@ export const BookPage = memo(
           aria-hidden
         />
 
+        {/* Quran-style Ornate Margin Design (Teal & Maroon Tazhib) - BULLETPROOF INLINE STYLES */}
+        <div 
+          className="pointer-events-none absolute inset-1.5 sm:inset-2 z-50"
+          aria-hidden
+        >
+          {/* 1. Outer Teal border */}
+          <div className="absolute inset-0 rounded-[3px]" style={{ borderWidth: "2px", borderStyle: "solid", borderColor: "#008b8b" }} />
+          
+          {/* 2. Scalloped / Sage green band (using dashed gold border over sage background) */}
+          <div className="absolute inset-[2px] rounded-[2px]" style={{ borderWidth: "3px", borderStyle: "solid", borderColor: "#8b998d" }} />
+          <div className="absolute inset-[2px]" style={{ borderWidth: "3px", borderStyle: "dashed", borderColor: "#d4af37", opacity: 0.75, mixBlendMode: "color-burn" }} />
+          
+          {/* 3. Main Maroon patterned band using 4 explicit absolute divs to guarantee rendering */}
+          <div className="absolute inset-[5px]">
+            {/* Top */}
+            <div className="absolute top-0 left-0 right-0" style={{ height: "16px", backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='16' height='16' fill='%235a1e2b'/%3E%3Cpath d='M8 0L16 8L8 16L0 8Z' fill='none' stroke='%23d4af37' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='8' r='2.5' fill='%23008b8b'/%3E%3Ccircle cx='8' cy='2' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='8' cy='14' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='2' cy='8' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='14' cy='8' r='0.75' fill='%23ffffff'/%3E%3C/svg%3E")`, backgroundRepeat: "repeat-x" }} />
+            {/* Bottom */}
+            <div className="absolute bottom-0 left-0 right-0" style={{ height: "16px", backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='16' height='16' fill='%235a1e2b'/%3E%3Cpath d='M8 0L16 8L8 16L0 8Z' fill='none' stroke='%23d4af37' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='8' r='2.5' fill='%23008b8b'/%3E%3Ccircle cx='8' cy='2' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='8' cy='14' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='2' cy='8' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='14' cy='8' r='0.75' fill='%23ffffff'/%3E%3C/svg%3E")`, backgroundRepeat: "repeat-x" }} />
+            {/* Left */}
+            <div className="absolute top-[16px] bottom-[16px] left-0" style={{ width: "16px", backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='16' height='16' fill='%235a1e2b'/%3E%3Cpath d='M8 0L16 8L8 16L0 8Z' fill='none' stroke='%23d4af37' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='8' r='2.5' fill='%23008b8b'/%3E%3Ccircle cx='8' cy='2' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='8' cy='14' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='2' cy='8' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='14' cy='8' r='0.75' fill='%23ffffff'/%3E%3C/svg%3E")`, backgroundRepeat: "repeat-y" }} />
+            {/* Right */}
+            <div className="absolute top-[16px] bottom-[16px] right-0" style={{ width: "16px", backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='16' height='16' fill='%235a1e2b'/%3E%3Cpath d='M8 0L16 8L8 16L0 8Z' fill='none' stroke='%23d4af37' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='8' r='2.5' fill='%23008b8b'/%3E%3Ccircle cx='8' cy='2' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='8' cy='14' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='2' cy='8' r='0.75' fill='%23ffffff'/%3E%3Ccircle cx='14' cy='8' r='0.75' fill='%23ffffff'/%3E%3C/svg%3E")`, backgroundRepeat: "repeat-y" }} />
+          </div>
+
+          {/* 4. Inner gold thin line */}
+          <div className="absolute" style={{ top: "21px", bottom: "21px", left: "21px", right: "21px", borderWidth: "1px", borderStyle: "solid", borderColor: "rgba(212, 175, 55, 0.8)" }} />
+
+          {/* 5. Inner Teal border */}
+          <div className="absolute" style={{ top: "22px", bottom: "22px", left: "22px", right: "22px", borderWidth: "1.5px", borderStyle: "solid", borderColor: "#008b8b" }} />
+        </div>
+
         {/* 4-Layer Page Layout Container */}
-        <div className="relative z-10 flex h-full flex-col justify-between px-4 py-4 sm:px-8 sm:py-7">
+        <div className="relative z-10 flex h-full flex-col justify-between px-8 pt-10 pb-8 sm:px-11 sm:pt-12 sm:pb-10">
           {/* Layer 1: Isolated Header (Fixed Top) */}
           <header className="shrink-0 text-center select-none pt-1 pb-1">
             <h2 className="font-display text-[0.72rem] sm:text-[0.78rem] font-medium tracking-[0.22em] sm:tracking-[0.28em] text-[#8c7853] uppercase">
