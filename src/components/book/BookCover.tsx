@@ -64,6 +64,13 @@ export function BookCover({ opening, onOpen, onReadLetter }: BookCoverProps) {
           <p className="font-body text-[0.6rem] sm:text-[0.65rem] uppercase tracking-[0.32em] sm:tracking-[0.38em] text-gold/80 mb-2">
             Our Lovable Memories
           </p>
+          <div className="my-4 sm:my-6 overflow-hidden rounded-md border-2 border-gold/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
+            <img 
+              src="/photo-collage.png" 
+              alt="Cover Collage" 
+              className="w-40 sm:w-48 md:w-56 h-auto object-cover opacity-80 mix-blend-luminosity transition-all duration-700 hover:mix-blend-normal hover:opacity-100"
+            />
+          </div>
           <h1
             className="text-gilded font-display text-4xl leading-tight tracking-wide sm:text-5xl flex items-center justify-center gap-2.5"
             style={{ filter: "drop-shadow(0 2px 6px oklch(0 0 0 / 0.6))" }}

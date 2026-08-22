@@ -140,6 +140,18 @@ export const BookPage = memo(
 
           {/* Layer 2 & 3: Conversation Area with Balanced Top Safe Area */}
           <main className="flex min-h-0 flex-1 flex-col justify-start pt-3 sm:pt-5 pb-2 overflow-visible">
+            {pageNumber === 1 && (
+              <div className="mb-6 flex justify-center px-4">
+                <div className="relative overflow-hidden rounded-xl border-4 border-white/60 shadow-[0_8px_20px_rgba(0,0,0,0.2)] transform -rotate-1 transition-transform hover:scale-[1.02] hover:rotate-0 duration-300">
+                  <img
+                    src="/photo-collage.png"
+                    alt="Our Memories Collage"
+                    className="max-h-72 sm:max-h-96 md:max-h-[28rem] w-auto object-cover"
+                  />
+                  <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_12px_rgba(0,0,0,0.15)] rounded-xl" />
+                </div>
+              </div>
+            )}
             {blocks && blocks.length > 0
               ? blocks.map((block, blockIdx) => (
                   <section key={block.id} className="flex flex-col">
