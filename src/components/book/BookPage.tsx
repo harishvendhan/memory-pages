@@ -141,14 +141,22 @@ export const BookPage = memo(
           {/* Layer 2 & 3: Conversation Area with Balanced Top Safe Area */}
           <main className="flex min-h-0 flex-1 flex-col justify-start pt-3 sm:pt-5 pb-2 overflow-visible">
             {pageNumber === 1 && (
-              <div className="mb-6 flex justify-center px-4">
-                <div className="relative overflow-hidden rounded-xl border-4 border-white/60 shadow-[0_8px_20px_rgba(0,0,0,0.2)] transform -rotate-1 transition-transform hover:scale-[1.02] hover:rotate-0 duration-300">
+              <div className="mb-6 flex justify-center px-4 relative items-center">
+                {/* Blinking gold background glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[95%] rounded-xl bg-yellow-400/50 blur-2xl animate-[pulse_2s_ease-in-out_infinite]" />
+                
+                {/* Twinkling Stars */}
+                <div className="absolute -top-4 left-1/4 text-yellow-400 text-2xl animate-[pulse_1.5s_ease-in-out_infinite] filter drop-shadow-[0_0_8px_rgba(255,215,0,0.8)] z-30">✦</div>
+                <div className="absolute bottom-4 -right-2 text-yellow-300 text-xl animate-[pulse_2.2s_ease-in-out_infinite] filter drop-shadow-[0_0_6px_rgba(255,215,0,0.8)] z-30">✧</div>
+                <div className="absolute top-1/3 -left-2 text-yellow-500 text-lg animate-[pulse_1.8s_ease-in-out_infinite] filter drop-shadow-[0_0_5px_rgba(255,215,0,0.8)] z-30">✨</div>
+
+                <div className="relative overflow-hidden rounded-xl border-4 border-yellow-100/80 shadow-[0_0_35px_rgba(255,215,0,0.6)] animate-[pulse_2s_ease-in-out_infinite] transform -rotate-1 transition-transform hover:scale-[1.02] hover:rotate-0 duration-300">
                   <img
                     src="/photo-collage.png"
                     alt="Our Memories Collage"
-                    className="max-h-72 sm:max-h-96 md:max-h-[28rem] w-auto object-cover"
+                    className="max-h-72 sm:max-h-96 md:max-h-[28rem] w-auto object-cover relative z-10"
                   />
-                  <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_12px_rgba(0,0,0,0.15)] rounded-xl" />
+                  <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_15px_rgba(0,0,0,0.3)] rounded-xl z-20" />
                 </div>
               </div>
             )}

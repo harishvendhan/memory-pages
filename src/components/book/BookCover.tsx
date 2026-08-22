@@ -64,12 +64,23 @@ export function BookCover({ opening, onOpen, onReadLetter }: BookCoverProps) {
           <p className="font-body text-[0.6rem] sm:text-[0.65rem] uppercase tracking-[0.32em] sm:tracking-[0.38em] text-gold/80 mb-2">
             Our Lovable Memories
           </p>
-          <div className="my-4 sm:my-6 overflow-hidden rounded-md border-2 border-gold/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
-            <img 
-              src="/photo-collage.png" 
-              alt="Cover Collage" 
-              className="w-40 sm:w-48 md:w-56 h-auto object-cover opacity-80 mix-blend-luminosity transition-all duration-700 hover:mix-blend-normal hover:opacity-100"
-            />
+          <div className="my-4 sm:my-6 relative flex justify-center items-center">
+            {/* Blinking gold background glow */}
+            <div className="absolute inset-0 rounded-md bg-yellow-400/50 blur-2xl animate-[pulse_2s_ease-in-out_infinite]" />
+            
+            {/* Twinkling Stars */}
+            <div className="absolute -top-3 -left-4 text-yellow-300 text-xl animate-[pulse_1.2s_ease-in-out_infinite] filter drop-shadow-[0_0_5px_rgba(255,215,0,0.8)] z-20">✦</div>
+            <div className="absolute -bottom-3 -right-5 text-yellow-200 text-lg animate-[pulse_1.8s_ease-in-out_infinite] filter drop-shadow-[0_0_5px_rgba(255,215,0,0.8)] z-20">✧</div>
+            <div className="absolute top-1/2 -right-6 text-yellow-400 text-sm animate-[pulse_2.5s_ease-in-out_infinite] filter drop-shadow-[0_0_5px_rgba(255,215,0,0.8)] z-20">✦</div>
+            <div className="absolute -bottom-2 left-6 text-yellow-300 text-sm animate-[pulse_1.5s_ease-in-out_infinite] filter drop-shadow-[0_0_5px_rgba(255,215,0,0.8)] z-20">✨</div>
+
+            <div className="relative overflow-hidden rounded-md border-2 border-yellow-400/80 shadow-[0_0_30px_rgba(255,215,0,0.7)] animate-[pulse_2s_ease-in-out_infinite]">
+              <img 
+                src="/photo-collage.png" 
+                alt="Cover Collage" 
+                className="w-40 sm:w-48 md:w-56 h-auto object-cover opacity-80 mix-blend-luminosity transition-all duration-700 hover:mix-blend-normal hover:opacity-100 relative z-10"
+              />
+            </div>
           </div>
           <h1
             className="text-gilded font-display text-4xl leading-tight tracking-wide sm:text-5xl flex items-center justify-center gap-2.5"
